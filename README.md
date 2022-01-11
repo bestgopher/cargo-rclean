@@ -10,3 +10,7 @@ cargo clean recursively
 ```shell
 ➜ cargo rclean
 ```
+
+# todo
+- [ ] add some command line arguments
+- [ ] support multi threads execution

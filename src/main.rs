@@ -1,9 +1,8 @@
 mod walk;
 
-use cargo::ops::{clean, CleanOptions};
 use cargo::core::Workspace;
-use cargo::util::{Config, interning::InternedString};
-
+use cargo::ops::{clean, CleanOptions};
+use cargo::util::{interning::InternedString, Config};
 
 use crate::walk::Walk;
 
