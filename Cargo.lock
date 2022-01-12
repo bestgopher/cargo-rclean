@@ -163,6 +163,8 @@ dependencies = [
  "cargo",
  "clap 3.0.6",
  "crossbeam",
+ "env_logger",
+ "itertools",
  "log",
 ]
 

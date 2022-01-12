@@ -5,7 +5,7 @@ use cargo::core::Workspace;
 use cargo::ops::{self as cargo_clean, CleanOptions};
 use cargo::util::interning::InternedString;
 use crossbeam::channel::{Sender, unbounded};
-use log::error;
+use log::{error, info};
 
 /// num: the number of threads
 pub fn clean(num: usize) -> (Sender<PathBuf>, impl FnOnce()) {
@@ -28,7 +28,8 @@ pub fn clean(num: usize) -> (Sender<PathBuf>, impl FnOnce()) {
                 };
 
                 while let Ok(path) = receiver.recv() {
-                    let w = Workspace::new(path.join("Cargo.toml").as_path(), &config).unwrap();
+                    info!("clean: {}", path.display());
+                    let w = Workspace::new(&path.join("Cargo.toml"), &config).unwrap();
                     if let Err(_e) = cargo_clean::clean(&w, &config_opt) {
                         error!("clean error");
                     }
