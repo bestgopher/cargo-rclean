@@ -1,26 +1,23 @@
 mod walk;
+mod clean;
 
-use cargo::core::Workspace;
-use cargo::ops::{clean, CleanOptions};
-use cargo::util::{interning::InternedString, Config};
-
+use std::env;
+use log::error;
 use crate::walk::Walk;
 
 fn main() -> anyhow::Result<()> {
-    for path in Walk::new(".") {
-        let config = &Config::default()?;
-        let w = Workspace::new(path.join("Cargo.toml").as_path(), config)?;
-        let config_opt: CleanOptions = CleanOptions {
-            config: &config,
-            spec: Default::default(),
-            targets: Default::default(),
-            profile_specified: Default::default(),
-            requested_profile: InternedString::from("dev"),
-            doc: Default::default(),
-        };
+    let base_dir = env::current_dir()?;
+    let (sender, wait_func) = clean::clean(3);
 
-        clean(&w, &config_opt)?;
+    for path in Walk::new(base_dir) {
+        if let Err(_err) = sender.send(path) {
+            error!("send error");
+        }
     }
+
+    drop(sender);
+
+    wait_func();
 
     Ok(())
 }

@@ -162,6 +162,7 @@ dependencies = [
  "anyhow",
  "cargo",
  "crossbeam",
+ "log",
 ]
 
 [[package]]

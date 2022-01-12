@@ -14,8 +14,7 @@ impl Walk {
         if path.as_ref().to_path_buf().is_absolute() {
             s.list.push_front(path.as_ref().to_path_buf());
         } else {
-            s.list
-                .push_front(fs::canonicalize(path.as_ref()).unwrap().to_path_buf());
+            s.list.push_front(fs::canonicalize(path.as_ref()).unwrap());
         }
         s
     }
@@ -30,13 +29,11 @@ impl Iterator for Walk {
                 Some(path) if path.is_dir() => {
                     if path.join("Cargo.toml").exists() {
                         return Some(path);
-                    } else {
-                        if let Ok(f) = path.read_dir() {
-                            self.list.extend(
-                                f.filter(|x| x.is_ok() && x.as_ref().unwrap().path().is_dir())
-                                    .map(|x| x.unwrap().path()),
-                            )
-                        }
+                    } else if let Ok(f) = path.read_dir() {
+                        self.list.extend(
+                            f.filter(|x| x.is_ok() && x.as_ref().unwrap().path().is_dir())
+                                .map(|x| x.unwrap().path()),
+                        )
                     }
                 }
                 Some(_) => continue,

@@ -9,3 +9,4 @@ edition = "2021"
 anyhow = "1.0.52"
 cargo = "0.58.0"
 crossbeam = { version = "0.8.1", features = ["std"] }
+log = "0.4.14"
