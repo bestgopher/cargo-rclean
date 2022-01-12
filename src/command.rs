@@ -6,7 +6,7 @@ use clap::Parser;
 use itertools::Itertools;
 
 /// A cargo subcommand which like `cargo clean` but clean all cargo projects.
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Default)]
 #[clap(version = "0.1.0")]
 pub struct Commands {
     /// Number of threads
@@ -32,11 +32,11 @@ pub struct Commands {
 
 impl Commands {
     pub fn valid_path(&self, path: &Path) -> bool {
-        if !self.includes.is_empty() && !self.includes.iter().any(|x| x.ends_with(path)) {
+        if !self.includes.is_empty() && !self.includes.iter().any(|x| path.ends_with(x)) {
             return false;
         }
 
-        if !self.excludes.is_empty() && self.excludes.iter().any(|x| x.ends_with(path)) {
+        if !self.excludes.is_empty() && self.excludes.iter().any(|x| path.ends_with(x)) {
             return false;
         }
 
@@ -46,13 +46,14 @@ impl Commands {
 
 impl Display for Commands {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f,
-               "thread_num: {}, path: {}, includes: [{}], excludes: [{}], debug: {}",
-               self.thread_num,
-               self.path.display(),
-               self.includes.iter().map(|x| x.display().to_string()).join(", "),
-               self.excludes.iter().map(|x| x.display().to_string()).join(", "),
-               self.debug
+        write!(
+            f,
+            "thread_num: {}, path: {}, includes: [{}], excludes: [{}], debug: {}",
+            self.thread_num,
+            self.path.display(),
+            self.includes.iter().map(|x| x.display().to_string()).join(", "),
+            self.excludes.iter().map(|x| x.display().to_string()).join(", "),
+            self.debug
         )
     }
 }
@@ -69,6 +70,7 @@ fn parse_path(p: &str) -> anyhow::Result<PathBuf> {
 mod tests {
     use std::env;
     use std::path::PathBuf;
+
     use crate::command::parse_path;
     use crate::Commands;
 
@@ -94,5 +96,16 @@ mod tests {
                 }
             ).as_str()
         )
+    }
+
+    #[test]
+    fn test_valid_path() {
+        let command = Commands {
+            includes: vec![PathBuf::from("a")],
+            ..Default::default()
+        };
+
+        assert!(command.valid_path(&PathBuf::from("/user/a")));
+        assert!(!command.valid_path(&PathBuf::from("/user/b")));
     }
 }
