@@ -4,7 +4,6 @@ Execute `cargo clean` for all cargo projects in the directory.
 # install
 ```shell
 ➜ cargo install --git https://github.com/bestgopher/cargo-rclean
-➜ cargo install cargo-rclean
 ```
 
 # usage
