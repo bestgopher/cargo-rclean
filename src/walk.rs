@@ -1,6 +1,6 @@
 use std::collections::LinkedList;
 
-use std::path::{PathBuf};
+use std::path::PathBuf;
 
 use crate::command::Commands;
 

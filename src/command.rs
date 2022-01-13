@@ -1,13 +1,26 @@
-use std::path::{Path, PathBuf};
 use std::env;
 use std::fmt::Display;
+use std::path::{Path, PathBuf};
 
-use clap::Parser;
+use clap::{AppSettings, Parser};
 use itertools::Itertools;
+
+#[derive(Parser)]
+#[clap(bin_name = "cargo", version, author)]
+pub enum Opts {
+    /// Show the result of macro expansion.
+    #[clap(
+    name = "rclean",
+    version,
+    author,
+    setting = AppSettings::DeriveDisplayOrder,
+    setting = AppSettings::DontCollapseArgsInUsage
+    )]
+    Rclean(Commands),
+}
 
 /// A cargo subcommand which like `cargo clean` but clean all cargo projects.
 #[derive(Parser, Debug, Default)]
-#[clap(version = "0.1.0")]
 pub struct Commands {
     /// Number of threads
     #[clap(short = 'n', long, default_value = "3")]
@@ -51,8 +64,14 @@ impl Display for Commands {
             "thread_num: {}, path: {}, includes: [{}], excludes: [{}], debug: {}",
             self.thread_num,
             self.path.display(),
-            self.includes.iter().map(|x| x.display().to_string()).join(", "),
-            self.excludes.iter().map(|x| x.display().to_string()).join(", "),
+            self.includes
+                .iter()
+                .map(|x| x.display().to_string())
+                .join(", "),
+            self.excludes
+                .iter()
+                .map(|x| x.display().to_string())
+                .join(", "),
             self.debug
         )
     }
@@ -71,8 +90,7 @@ mod tests {
     use std::env;
     use std::path::PathBuf;
 
-    use crate::command::parse_path;
-    use crate::Commands;
+    use crate::command::{parse_path, Commands};
 
     #[test]
     fn test_parse_path() {

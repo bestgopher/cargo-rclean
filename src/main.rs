@@ -1,15 +1,16 @@
-mod walk;
 mod clean;
 mod command;
+mod walk;
 
-use log::{debug, error, LevelFilter};
 use clap::Parser;
+use log::{debug, error, LevelFilter};
 
+use crate::command::Opts;
 use crate::walk::Walk;
-use crate::command::Commands;
 
 fn main() -> anyhow::Result<()> {
-    let command: Commands = Commands::parse();
+    let Opts::Rclean(command) = Opts::parse();
+
     log_init(command.debug);
 
     debug!("command line arguments: {}", command);
@@ -34,5 +35,7 @@ fn log_init(debug: bool) {
         builder.filter_level(LevelFilter::Debug);
     }
 
-    builder.filter_module(" cargo_rclean::clean", LevelFilter::Debug).init();
+    builder
+        .filter_module(" cargo_rclean::clean", LevelFilter::Debug)
+        .init();
 }
