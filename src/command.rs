@@ -8,7 +8,7 @@ use itertools::Itertools;
 #[derive(Parser)]
 #[clap(bin_name = "cargo", version, author)]
 pub enum Opts {
-    /// Show the result of macro expansion.
+    /// Execute `cargo clean` for all cargo projects in the directory
     #[clap(
     name = "rclean",
     version,
