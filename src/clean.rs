@@ -16,7 +16,7 @@ pub fn clean(num: usize) -> (Sender<PathBuf>, impl FnOnce()) {
         let receiver = receiver.clone();
 
         let s = Builder::new()
-            .name(format!("thread-{}", i))
+            .name(format!("thread-{i}"))
             .spawn(move || {
                 let config = Config::default().unwrap();
                 let config_opt = CleanOptions {

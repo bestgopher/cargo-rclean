@@ -13,7 +13,7 @@ fn main() -> anyhow::Result<()> {
 
     log_init(command.debug);
 
-    debug!("command line arguments: {}", command);
+    debug!("command line arguments: {command}");
     let (sender, wait_func) = clean::clean(command.thread_num);
 
     for path in Walk::new(&command) {
