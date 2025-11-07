@@ -1,7 +1,7 @@
 use cargo::core::Workspace;
 use cargo::ops::{self as cargo_clean, CleanOptions};
 use cargo::util::interning::InternedString;
-use cargo::Config;
+use cargo::GlobalContext;
 use crossbeam::channel::{unbounded, Sender};
 use log::{error, info};
 use std::path::PathBuf;
@@ -18,14 +18,15 @@ pub fn clean(num: usize) -> (Sender<PathBuf>, impl FnOnce()) {
         let s = Builder::new()
             .name(format!("thread-{i}"))
             .spawn(move || {
-                let config = Config::default().unwrap();
+                let config = GlobalContext::default().unwrap();
                 let config_opt = CleanOptions {
-                    config: &config,
+                    gctx: &config,
                     spec: Default::default(),
                     targets: Default::default(),
                     profile_specified: Default::default(),
                     requested_profile: InternedString::from("dev"),
                     doc: Default::default(),
+                    dry_run: false,
                 };
 
                 while let Ok(path) = receiver.recv() {
